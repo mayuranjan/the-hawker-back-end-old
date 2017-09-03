@@ -29,4 +29,6 @@ public interface PremiseRepository extends JpaRepository<Premise, Integer> {
 	List<Premise> findByType(String type);
 
 	Premise findByNameAndBuilder(String name, String builder);
+
+	List<Premise> findByTypeAndBuilder(String type, String builder);
 }

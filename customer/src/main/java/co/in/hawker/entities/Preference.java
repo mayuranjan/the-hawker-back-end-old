@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "preference", schema = "customer_db", catalog="customer_db")
+@Table(name = "preference", schema = "customer_db", catalog = "customer_db")
 public class Preference implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -36,6 +36,10 @@ public class Preference implements Serializable {
 	@JoinColumn(name = "waterProductId")
 	private Product water;
 
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = Product.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "newspaperProductId")
+	private Product newspaper;
+
 	@Column(unique = false, nullable = true)
 	private Time preferredTimeSlot;
 
@@ -54,6 +58,53 @@ public class Preference implements Serializable {
 
 	public Preference() {
 
+	}
+
+	public Preference(Credential credential) {
+		this.credential = credential;
+		this.status = "Active";
+	}
+
+	public Preference(Credential credential, String status) {
+		this(credential);
+		this.status = status;
+	}
+
+	public Preference(Credential credential, String status, String language) {
+		this(credential, status);
+		this.language = language;
+	}
+
+	public Preference(Credential credential, String status, String language, Time preferredTimeSlot) {
+		this(credential, status, language);
+		this.preferredTimeSlot = preferredTimeSlot;
+	}
+
+	public Preference(Credential credential, String status, String language, Time preferredTimeSlot, String paymentMode) {
+		this(credential, status, language, preferredTimeSlot);
+		this.paymentMode = paymentMode;
+	}
+
+	public Preference(Credential credential, String status, String language, Time preferredTimeSlot, String paymentMode, String channelOfCommunication) {
+		this(credential, status, language, preferredTimeSlot, paymentMode);
+		this.channelOfCommunication = channelOfCommunication;
+	}
+
+	public Preference(Credential credential, String status, String language, Time preferredTimeSlot, String paymentMode, String channelOfCommunication, Product product, String typeOfProduct) {
+		this(credential, status, language, preferredTimeSlot, paymentMode, channelOfCommunication);
+		switch (typeOfProduct) {
+		case "Milk":
+			this.milk = product;
+			break;
+		case "Water":
+			this.water = product;
+			break;
+		case "Newspaper":
+			this.newspaper = product;
+			break;
+		default:
+			break;
+		}
 	}
 
 	public Long getPreferenceId() {
@@ -86,6 +137,14 @@ public class Preference implements Serializable {
 
 	public void setWater(Product water) {
 		this.water = water;
+	}
+
+	public Product getNewspaper() {
+		return newspaper;
+	}
+
+	public void setNewspaper(Product newspaper) {
+		this.newspaper = newspaper;
 	}
 
 	public Time getPreferredTimeSlot() {

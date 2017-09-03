@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import co.in.hawker.entities.OrderItem;
 import co.in.hawker.services.OrderItemService;
+import co.in.hawker.services.OrderService;
+import co.in.hawker.services.ProductService;
 import co.in.hawker.util.FailureStatus;
 import co.in.hawker.util.Status;
 import co.in.hawker.util.SuccessStatus;
@@ -40,6 +42,10 @@ import co.in.hawker.util.SuccessStatus;
 public class OrderItemController extends MasterController {
 	@Autowired
 	private OrderItemService orderItemService;
+	@Autowired
+	private OrderService orderService;
+	@Autowired
+	private ProductService productService;
 
 	@InitBinder
 	private void dataBinder(WebDataBinder binder) {
@@ -70,8 +76,8 @@ public class OrderItemController extends MasterController {
 			return new ResponseEntity<Status>(body, headers, status);
 		} catch (TransactionSystemException transactionSystemException) {
 
-			Status body = new FailureStatus("Failed to add OrderItem", "Exception", transactionSystemException.getMessage(),
-					order);
+			Status body = new FailureStatus("Failed to add OrderItem", "Exception",
+					transactionSystemException.getMessage(), order);
 			MultiValueMap<String, String> headers = new HttpHeaders();
 			HttpStatus status = HttpStatus.BAD_REQUEST;
 
@@ -215,7 +221,8 @@ public class OrderItemController extends MasterController {
 			return new ResponseEntity<Status>(body, headers, status);
 		} catch (Exception e) {
 
-			Status body = new FailureStatus("Failed to fetch OrderItem by OrderItem Id.", "Exception", e.getMessage(), orderId);
+			Status body = new FailureStatus("Failed to fetch OrderItem by OrderItem Id.", "Exception", e.getMessage(),
+					orderId);
 			MultiValueMap<String, String> headers = new HttpHeaders();
 			HttpStatus status = HttpStatus.BAD_REQUEST;
 
@@ -226,7 +233,8 @@ public class OrderItemController extends MasterController {
 	@CrossOrigin(origins = "*", maxAge = 3600)
 	@RequestMapping(value = "/updateByOrderItemId/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Status> updateOrderItemByOrderItemId(@PathVariable("id") Long orderId, @RequestBody OrderItem order) {
+	public ResponseEntity<Status> updateOrderItemByOrderItemId(@PathVariable("id") Long orderId,
+			@RequestBody OrderItem order) {
 		order.setOrderItemId(orderId);
 
 		try {
@@ -245,231 +253,579 @@ public class OrderItemController extends MasterController {
 			return new ResponseEntity<Status>(body, headers, status);
 		}
 	}
-// TODO: start from here
-//	@CrossOrigin(origins = "*", maxAge = 3600)
-//	@RequestMapping(value = "/updateOrderItemsStatusByCredential/{credentialId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Status> updateOrderItemsStatusByCredential(@PathVariable("credentialId") Long credentialId,
-//			@RequestBody OrderItem order) {
-//		order.setCredential(credentialService.getCredentialByCredentialId(credentialId));
-//
-//		try {
-//			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsStatusByCredential(order);
-//
-//			Status body = new SuccessStatus("Brand updated Successfully !", updatedOrderItems);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.OK;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (ConstraintViolationException cVException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand", "ConstraintViolationException",
-//					cVException.getCause().toString(), cVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (DataIntegrityViolationException dIVException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand", "DataIntegrityViolationException",
-//					dIVException.getRootCause().toString(), dIVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (RuntimeException rException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand.", "RuntimeException", rException.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (Exception e) {
-//
-//			Status body = new FailureStatus("Failed to update Brand.", "Exception", e.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		}
-//	}
-//
-//	@CrossOrigin(origins = "*", maxAge = 3600)
-//	@RequestMapping(value = "/updateOrderItemsStatusByCredentialAndStatus/{credentialId}/{status}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Status> updateOrderItemsStatusByCredentialAndStatus(
-//			@PathVariable("credentialId") Long credentialId, @PathVariable("status") String fStatus,
-//			@RequestBody OrderItem order) {
-//		order.setCredential(credentialService.getCredentialByCredentialId(credentialId));
-//		order.setStatus(fStatus);
-//
-//		try {
-//			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsStatusByCredentialAndStatus(order);
-//
-//			Status body = new SuccessStatus("Brand updated Successfully !", updatedOrderItems);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.OK;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (ConstraintViolationException cVException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand", "ConstraintViolationException",
-//					cVException.getCause().toString(), cVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (DataIntegrityViolationException dIVException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand", "DataIntegrityViolationException",
-//					dIVException.getRootCause().toString(), dIVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (RuntimeException rException) {
-//
-//			Status body = new FailureStatus("Failed to update Brand.", "RuntimeException", rException.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (Exception e) {
-//
-//			Status body = new FailureStatus("Failed to update Brand.", "Exception", e.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		}
-//	}
-//
-//	@CrossOrigin(origins = "*", maxAge = 3600)
-//	@RequestMapping(value = "/deleteByOrderItemId/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Status> deleteOrderItemByOrderItemId(@PathVariable("id") Long orderId) {
-//		OrderItem order = new OrderItem();
-//		order.setOrderItemId(orderId);
-//
-//		try {
-//			orderItemService.deleteOrderItemByOrderItemId(order);
-//
-//			Status body = new SuccessStatus("OrderItem deleted Successfully !", orderId);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.OK;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (Exception e) {
-//
-//			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(), orderId);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		}
-//	}
-//
-//	@CrossOrigin(origins = "*", maxAge = 3600)
-//	@RequestMapping(value = "/deleteByCredential/{credentialId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Status> deleteOrderItemsByCredential(@PathVariable("credentialId") Long credentialId) {
-//		OrderItem order = new OrderItem();
-//		order.setCredential(credentialService.getCredentialByCredentialId(credentialId));
-//
-//		try {
-//			orderItemService.deleteOrderItemsByCredential(order);
-//
-//			Status body = new SuccessStatus("OrderItem deleted Successfully !", order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.OK;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (ConstraintViolationException cVException) {
-//
-//			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
-//					cVException.getCause().toString(), cVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (DataIntegrityViolationException dIVException) {
-//
-//			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
-//					dIVException.getRootCause().toString(), dIVException.getMessage(), order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (RuntimeException rException) {
-//
-//			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (Exception e) {
-//
-//			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(),
-//					order.getCredential());
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		}
-//	}
-//
-//	@CrossOrigin(origins = "*", maxAge = 3600)
-//	@RequestMapping(value = "/deleteByCredentialAndStatus/{credentialId}/{status}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public ResponseEntity<Status> deleteOrderItemsByCredentialAndStatus(@PathVariable("credentialId") Long credentialId,
-//			@PathVariable("status") String fStatus) {
-//		OrderItem order = new OrderItem();
-//		order.setCredential(credentialService.getCredentialByCredentialId(credentialId));
-//		order.setStatus(fStatus);
-//
-//		try {
-//			orderItemService.deleteOrderItemsByCredential(order);
-//
-//			Status body = new SuccessStatus("OrderItem deleted Successfully !", order);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.OK;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (ConstraintViolationException cVException) {
-//
-//			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
-//					cVException.getCause().toString(), cVException.getMessage(), order);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (DataIntegrityViolationException dIVException) {
-//
-//			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
-//					dIVException.getRootCause().toString(), dIVException.getMessage(), order);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (RuntimeException rException) {
-//
-//			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(), order);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		} catch (Exception e) {
-//
-//			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(), order);
-//			MultiValueMap<String, String> headers = new HttpHeaders();
-//			HttpStatus status = HttpStatus.BAD_REQUEST;
-//
-//			return new ResponseEntity<Status>(body, headers, status);
-//		}
-//	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemsStatusByOrder/{orderId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemsStatusByOrder(@PathVariable("orderId") Long orderId,
+			@RequestBody OrderItem orderItem) {
+		orderItem.setOrder(orderService.getOrderByOrderId(orderId));
+
+		try {
+			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsStatusByOrder(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItems);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemsStatusByProduct/{productId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemsStatusByProduct(@PathVariable("productId") Long productId,
+			@RequestBody OrderItem orderItem) {
+		orderItem.setProduct(productService.getProductByProductId(productId));
+
+		try {
+			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsStatusByProduct(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItems);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemStatusByProductAndOrder/{productId}/{orderId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemStatusByProductAndOrder(@PathVariable("productId") Long productId,
+			@PathVariable("orderId") Long orderId, @RequestBody OrderItem orderItem) {
+		orderItem.setProduct(productService.getProductByProductId(productId));
+		orderItem.setOrder(orderService.getOrderByOrderId(orderId));
+
+		try {
+			OrderItem updatedOrderItem = orderItemService.updateOrderItemStatusByOrderAndProduct(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemsQuantityByOrder/{orderId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemsQuantityByOrder(@PathVariable("orderId") Long orderId,
+			@RequestBody OrderItem orderItem) {
+		orderItem.setOrder(orderService.getOrderByOrderId(orderId));
+
+		try {
+			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsQuantityByOrder(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItems);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemsQuantityByProduct/{productId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemsQuantityByProduct(@PathVariable("productId") Long productId,
+			@RequestBody OrderItem orderItem) {
+		orderItem.setProduct(productService.getProductByProductId(productId));
+
+		try {
+			List<OrderItem> updatedOrderItems = orderItemService.updateOrderItemsQuantityByProduct(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItems);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/updateOrderItemQuantityByProductAndOrder/{productId}/{orderId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> updateOrderItemQuantityByProductAndOrder(@PathVariable("productId") Long productId,
+			@PathVariable("orderId") Long orderId, @RequestBody OrderItem orderItem) {
+		orderItem.setProduct(productService.getProductByProductId(productId));
+		orderItem.setOrder(orderService.getOrderByOrderId(orderId));
+
+		try {
+			OrderItem updatedOrderItem = orderItemService.updateOrderItemQuantityByOrderAndProduct(orderItem);
+
+			Status body = new SuccessStatus("Order Item updated Successfully !", updatedOrderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to update Order Item", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "RuntimeException", rException.getMessage(),
+					orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to update Order Item.", "Exception", e.getMessage(), orderItem);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByOrderItemId/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteByOrderItemId(@PathVariable("id") Long orderId) {
+		OrderItem order = new OrderItem();
+		order.setOrderItemId(orderId);
+
+		try {
+			orderItemService.deleteOrderItemByOrderItemId(order);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", orderId);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(), orderId);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByOrder/{orderId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteByOrder(@PathVariable("orderId") Long orderId) {
+		OrderItem orderItem = new OrderItem();
+		orderItem.setOrder(orderService.getOrderByOrderId(orderId));
+
+		try {
+			orderItemService.deleteOrderItemsByOrder(orderItem);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(),
+					orderItem.getOrder());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByProduct/{productId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteByProduct(@PathVariable("productId") Long productId) {
+		OrderItem orderItem = new OrderItem();
+		orderItem.setProduct(productService.getProductByProductId(productId));
+
+		try {
+			orderItemService.deleteOrderItemsByProduct(orderItem);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(),
+					orderItem.getProduct());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByStatus/{oStatus}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteBystatus(@PathVariable("oStatus") String oStatus) {
+		OrderItem orderItem = new OrderItem();
+		orderItem.setStatus(oStatus);
+
+		try {
+			orderItemService.deleteOrderItemsByProduct(orderItem);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", orderItem.getStatus());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), orderItem.getStatus());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), orderItem.getStatus());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(),
+					orderItem.getStatus());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(),
+					orderItem.getStatus());
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByOrderAndStatus/{orderId}/{status}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteOrderItemsByOrderAndStatus(@PathVariable("orderId") Long orderId,
+			@PathVariable("status") String fStatus) {
+		OrderItem order = new OrderItem();
+		order.setOrder(orderService.getOrderByOrderId(orderId));
+		order.setStatus(fStatus);
+
+		try {
+			orderItemService.deleteOrderItemsByOrderAndStatus(order);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
+
+	@CrossOrigin(origins = "*", maxAge = 3600)
+	@RequestMapping(value = "/deleteByOrderAndStatus/{orderId}/{productId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Status> deleteOrderItemByOrderAndProduct(@PathVariable("orderId") Long orderId,
+			@PathVariable("productId") Long productId) {
+		OrderItem order = new OrderItem();
+		order.setOrder(orderService.getOrderByOrderId(orderId));
+		order.setProduct(productService.getProductByProductId(productId));
+
+		try {
+			orderItemService.deleteOrderItemByOrderAndProduct(order);
+
+			Status body = new SuccessStatus("OrderItem deleted Successfully !", order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.OK;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (ConstraintViolationException cVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "ConstraintViolationException",
+					cVException.getCause().toString(), cVException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (DataIntegrityViolationException dIVException) {
+
+			Status body = new FailureStatus("Failed to delete order", "DataIntegrityViolationException",
+					dIVException.getRootCause().toString(), dIVException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (RuntimeException rException) {
+
+			Status body = new FailureStatus("Failed to delete order.", "Exception", rException.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		} catch (Exception e) {
+
+			Status body = new FailureStatus("Failed to delete OrderItem.", "Exception", e.getMessage(), order);
+			MultiValueMap<String, String> headers = new HttpHeaders();
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+
+			return new ResponseEntity<Status>(body, headers, status);
+		}
+	}
 }

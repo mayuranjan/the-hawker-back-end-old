@@ -107,6 +107,16 @@ public class OrderItemService extends OrderItemValidations {
 		return this.getOrderItemsByProduct(orderItem.getProduct());
 	}
 
+	public List<OrderItem> updateOrderItemsQuantityByOrder(OrderItem orderItem) {
+		handleException(checkIfOrderItemOrderExists(orderItem));
+
+		for (OrderItem eachOrderItem : this.getOrderItemsByOrder(orderItem.getOrder())) {
+			eachOrderItem.setQuantity(orderItem.getQuantity());
+			orderItemRespository.save(orderItem);
+		}
+		return this.getOrderItemsByOrder(orderItem.getOrder());
+	}
+
 	public List<OrderItem> updateOrderItemsQuantityByProduct(OrderItem orderItem) {
 		handleException(checkIfOrderItemProductExists(orderItem));
 
@@ -115,6 +125,14 @@ public class OrderItemService extends OrderItemValidations {
 			orderItemRespository.save(orderItem);
 		}
 		return this.getOrderItemsByProduct(orderItem.getProduct());
+	}
+
+	public OrderItem updateOrderItemQuantityByOrderAndProduct(OrderItem orderItem) {
+		handleException(checkIfOrderItemOrderAndProductExists(orderItem));
+
+		orderItem = this.getOrderItemByOrderAndProduct(orderItem.getOrder(), orderItem.getProduct());
+		orderItem.setQuantity(orderItem.getQuantity());
+		return orderItemRespository.save(orderItem); 
 	}
 
 	public OrderItem updateOrderItemStatusByOrderAndProduct(OrderItem orderItem) {
