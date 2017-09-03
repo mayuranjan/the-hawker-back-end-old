@@ -1,0 +1,24 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/*/target/
+
+# dependencies
+/*/.mvn/
+
+# IDE - VSCode
+.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+
+# misc
+/*/app.log
+/*/.classpath
+/*/.project
+/*/.settings/
+
+
+# System Files
+.DS_Store
+Thumbs.db
+/bin/
