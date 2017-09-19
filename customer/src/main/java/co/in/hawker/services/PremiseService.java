@@ -104,6 +104,15 @@ public class PremiseService extends PremiseValidations {
 		return premiseRespository.findByNameAndBuilder(name, builder);
 	}
 
+	public List<Premise> getPremiseByTypeAndBuilder(String name, String builder) {
+		Premise premise = new Premise();
+		premise.setName(name);
+		premise.setBuilder(builder);
+
+		handleException(checkIfTypeAndBuilderExists(premise));
+		return premiseRespository.findByTypeAndBuilder(name, builder);
+	}
+
 	public Premise updatePremiseByPremiseId(Premise premise) {
 		handleException(checkIfPremiseIdDoesntExists(premise));
 
@@ -176,6 +185,74 @@ public class PremiseService extends PremiseValidations {
 
 	public Premise updatePremiseByNameAndBuilder(Premise premise) {
 		return premiseRespository.save(this.getPremiseByNameAndBuilder(premise.getName(), premise.getBuilder()));
+	}
+
+	public List<Premise> updatePremiseByTypeAndBuilder(Premise premise) {
+		return premiseRespository.save(this.getPremiseByTypeAndBuilder(premise.getType(), premise.getBuilder()));
+	}
+
+	public void deletePremiseByPremiseId(Premise premise) {
+		premiseRespository.delete(premise);
+		return;
+	}
+
+	public void deletePremisesByArea(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByArea(premise.getArea())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByBuilder(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByBuilder(premise.getBuilder())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByCountry(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByCountry(premise.getCountry())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByName(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByName(premise.getName())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByPincode(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByPincode(premise.getPincode())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByState(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByState(premise.getState())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByType(Premise premise) {
+		for (Premise eachPremise : this.getPremisesByType(premise.getType())) {
+			premiseRespository.delete(eachPremise);
+		}
+		return;
+	}
+
+	public void deletePremisesByNameAndBuilder(Premise premise) {
+		premiseRespository.delete(this.getPremiseByNameAndBuilder(premise.getName(), premise.getBuilder()));
+		return;
+	}
+
+	public void deletePremisesByTypeAndBuilder(Premise premise) {
+		premiseRespository.delete(this.getPremiseByTypeAndBuilder(premise.getType(), premise.getBuilder()));
+		return;
 	}
 
 }

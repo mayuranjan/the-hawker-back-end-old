@@ -78,6 +78,14 @@ public abstract class PremiseValidations {
 		return validation;
 	}
 
+	protected Validation checkIfTypeAndBuilderExists(Premise premise) {
+		Boolean isValid = premiseRespository.findByTypeAndBuilder(premise.getType(), premise.getBuilder()) == null;
+		String errorMessage = "Type \"" + premise.getType() + "\" and " + "Builder \"" + premise.getBuilder()
+				+ "\" doesn't exist, can't get/delete Premise.";
+		validation = new Validation(isValid, errorMessage);
+		return validation;
+	}
+
 	protected Validation checkIfBuilderExists(Premise premise) {
 		Boolean isValid = premiseRespository.findByBuilder(premise.getBuilder()) == null;
 		String errorMessage = "Builder \"" + premise.getBuilder() + "\" doesn't exist, can't get/delete Premise.";

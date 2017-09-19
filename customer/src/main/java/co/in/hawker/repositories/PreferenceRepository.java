@@ -23,6 +23,8 @@ public interface PreferenceRepository extends JpaRepository<Preference, Integer>
 
 	List<Preference> findByLanguage(String language);
 
+	List<Preference> findByPaymentMode(String paymentMode);
+
 	List<Preference> findByMilk(Product milk);
 
 	List<Preference> findByMilkAndLanguage(Product milk, String language);
@@ -78,7 +80,11 @@ public interface PreferenceRepository extends JpaRepository<Preference, Integer>
 	List<Preference> findByWaterAndNewspaper(Product water, Product newspaper);
 	
 	List<Preference> findByMilkAndWaterAndNewspaper(Product milk, Product water, Product newspaper);
-	
+
 	List<Preference> findByPreferredTimeSlot(Time preferredTimeSlot);
+	
+	List<Preference> findByStatus(String status);
+	
+	List<Preference> findByCredentialAndStatus(Credential credential, String status);
 	
 }

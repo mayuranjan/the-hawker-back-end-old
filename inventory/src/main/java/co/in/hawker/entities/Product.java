@@ -3,16 +3,22 @@ package co.in.hawker.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "product", schema = "inventory_db", catalog="inventory_db", uniqueConstraints = @UniqueConstraint(columnNames = { "productCode" }))
+@Table(name = "product", schema = "inventory_db", catalog = "inventory_db", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"productCode" }))
 public class Product implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -55,11 +61,13 @@ public class Product implements Serializable {
 	@Column()
 	private String manufacturersCode;
 
-	@Column()
-	private Long brandId;
+	@ManyToOne(fetch = FetchType.LAZY, targetEntity = Brand.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "brandId")
+	private Brand brand;
 
-	@Column()
-	private Long typeId;
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = Type.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "typeId")
+	private Type type;
 
 	public Product() {
 
@@ -67,8 +75,8 @@ public class Product implements Serializable {
 
 	public Product(String productName, String productCode, BigDecimal costPrice, BigDecimal retailSellingPrice,
 			BigDecimal retailDeliveryCharges, BigDecimal wholsesaleSellingPrice, BigDecimal wholesaleDeliveryCharges,
-			String productDescription, int expiryInDays, String volume, String manufacturersCode, Long brandId,
-			Long typeId) {
+			String productDescription, int expiryInDays, String volume, String manufacturersCode, Brand brand,
+			Type type) {
 		this.productName = productName;
 		this.productCode = productCode;
 		this.costPrice = costPrice;
@@ -80,8 +88,8 @@ public class Product implements Serializable {
 		this.expiryInDays = expiryInDays;
 		this.volume = volume;
 		this.manufacturersCode = manufacturersCode;
-		this.brandId = brandId;
-		this.typeId = typeId;
+		this.brand = brand;
+		this.type = type;
 	}
 
 	public Long getProductId() {
@@ -180,20 +188,20 @@ public class Product implements Serializable {
 		this.manufacturersCode = manufacturersCode;
 	}
 
-	public Long getBrandId() {
-		return brandId;
+	public Brand getBrand() {
+		return brand;
 	}
 
-	public void setBrandId(Long brandId) {
-		this.brandId = brandId;
+	public void setBrand(Brand brand) {
+		this.brand = brand;
 	}
 
-	public Long getTypeId() {
-		return typeId;
+	public Type getType() {
+		return type;
 	}
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	public static long getSerialversionuid() {
