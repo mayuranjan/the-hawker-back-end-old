@@ -34,7 +34,7 @@ public class Order implements Serializable {
 	private String status;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = OrderItem.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "orderItemId")
+	@JoinColumn(name = "orderId")
 	private Set<OrderItem> orderItems;
 
 	@ManyToOne(fetch = FetchType.LAZY, targetEntity = Credential.class, cascade = CascadeType.ALL)

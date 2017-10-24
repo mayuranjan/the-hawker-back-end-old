@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "frequencyType", schema = "customer_db", catalog = "customer_db")
+@Table(name = "frequency_type", schema = "customer_db", catalog = "customer_db")
 public class FrequencyType implements Serializable {
 
 	private static final long serialVersionUID = 1L;

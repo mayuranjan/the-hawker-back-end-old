@@ -1,6 +1,7 @@
 package co.in.hawker.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -52,29 +54,35 @@ public class Credential implements Serializable {
 
 	@Column(unique = false, nullable = true)
 	private Long masterCredentialId;
+	
+	@ManyToOne
+    private Credential masterAccount;
+	
+	@OneToMany(mappedBy = "masterAccount")
+    private Set<Credential> childAccounts = new HashSet<Credential>();
 
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = Profile.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "profileId")
+	@JoinColumn(name = "credentialId")
 	private Profile profile;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Address.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "addressId")
+	@JoinColumn(name = "credentialId")
 	private Set<Address> addresses;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Frequency.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "frequencyId")
+	@JoinColumn(name = "credentialId")
 	private Set<Frequency> frequencies;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Order.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "orderId")
+	@JoinColumn(name = "credentialId")
 	private Set<Order> orders;
 
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = Preference.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "preferenceId")
+	@JoinColumn(name = "credentialId")
 	private Preference preference;
 
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = Wallet.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "walletId")
+	@JoinColumn(name = "credentialId")
 	private Wallet wallet;
 
 	public Credential() {
@@ -235,6 +243,22 @@ public class Credential implements Serializable {
 
 	public void setWallet(Wallet wallet) {
 		this.wallet = wallet;
+	}
+	
+	public Credential getMasterAccount() {
+		return masterAccount;
+	}
+
+	public void setMasterAccount(Credential masterAccount) {
+		this.masterAccount = masterAccount;
+	}
+
+	public Set<Credential> getChildAccounts() {
+		return childAccounts;
+	}
+
+	public void setChildAccounts(Set<Credential> childAccounts) {
+		this.childAccounts = childAccounts;
 	}
 
 	public static long getSerialversionuid() {

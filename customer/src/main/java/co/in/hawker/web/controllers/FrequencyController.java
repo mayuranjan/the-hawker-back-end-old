@@ -212,7 +212,7 @@ public class FrequencyController extends MasterController {
 	}
 
 	@CrossOrigin(origins = "*", maxAge = 3600)
-	@RequestMapping(value = "/getByCredentialAndStartDate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/getByCredentialAndEndDate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Status> getFrequenciesByCredentialAndEndDate(@RequestParam("frequency") Frequency frequency) {
 		try {

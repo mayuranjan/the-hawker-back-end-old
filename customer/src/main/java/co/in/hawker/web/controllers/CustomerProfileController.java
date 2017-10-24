@@ -18,7 +18,7 @@ import co.in.hawker.services.ProfileService;
  */
 @Controller
 @RequestMapping(value = "/profiles/")
-public class ProfileController extends MasterController {
+public class CustomerProfileController extends MasterController {
 	@Autowired
 	private ProfileService profileService;
 

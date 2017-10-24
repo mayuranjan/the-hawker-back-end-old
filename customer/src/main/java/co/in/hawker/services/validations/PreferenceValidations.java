@@ -10,6 +10,7 @@ import co.in.hawker.util.Validation;
 public abstract class PreferenceValidations {
 	@Autowired
 	private PreferenceRepository preferenceRespository;
+
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -28,6 +29,13 @@ public abstract class PreferenceValidations {
 		Boolean isValid = preferenceRespository.findByPreferenceId(preference.getPreferenceId()) == null;
 		String errorMessage = "Preference ID \"" + preference.getPreferenceId()
 				+ "\" doesn't exist, can't delete Preference.";
+		validation = new Validation(!isValid, errorMessage);
+		return validation;
+	}
+
+	protected Validation checkIfPreferenceStatusExists(Preference preference) {
+		Boolean isValid = preferenceRespository.findByStatus(preference.getStatus()) == null;
+		String errorMessage = "Status \"" + preference.getStatus() + "\" doesn't exist, can't delete Preference.";
 		validation = new Validation(!isValid, errorMessage);
 		return validation;
 	}
@@ -97,18 +105,19 @@ public abstract class PreferenceValidations {
 	}
 
 	protected Validation checkIfPreferenceChannelOfCommunicationExists(Preference preference) {
-		Boolean isValid = preferenceRespository.findByChannelOfCommunication(preference.getChannelOfCommunication()) == null;
+		Boolean isValid = preferenceRespository
+				.findByChannelOfCommunication(preference.getChannelOfCommunication()) == null;
 		String errorMessage = "Preference with Channel Of Communication \"" + preference.getChannelOfCommunication()
 				+ "\" doesn't exist, can't delete Frequency.";
 		validation = new Validation(!isValid, errorMessage);
 		return validation;
 	}
 
-	protected Validation checkIfOrderCredentialAndStatusExists(Preference preference) {
+	protected Validation checkIfPreferenceCredentialAndStatusExists(Preference preference) {
 		Boolean isValid = preferenceRespository.findByCredentialAndStatus(preference.getCredential(),
 				preference.getStatus()) == null;
-		String errorMessage = "Preference with Credential \"" + preference.getCredential().getCredentialId() + "\" and Status \""
-				+ preference.getStatus() + "\" doesn't exist, can't delete Preference.";
+		String errorMessage = "Preference with Credential \"" + preference.getCredential().getCredentialId()
+				+ "\" and Status \"" + preference.getStatus() + "\" doesn't exist, can't delete Preference.";
 		validation = new Validation(!isValid, errorMessage);
 		return validation;
 	}

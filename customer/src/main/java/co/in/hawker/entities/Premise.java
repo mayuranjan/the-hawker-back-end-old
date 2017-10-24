@@ -56,7 +56,7 @@ public class Premise implements Serializable {
 	private String country;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Address.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "addressId")
+	@JoinColumn(name = "premiseId")
 	private Set<Address> addresses;
 
 	public Premise() {
